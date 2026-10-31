@@ -41,6 +41,52 @@ cc -Wall -Wextra -Werror -I/path/to/libft \
 Replace `/path/to/libft` with the directory containing `libft.h` and
 `libft.a`.
 
+## Inspect object files and the static library
+
+A `.c` file is source code, not a statically linked binary. Compile it to an
+object file (`.o`) to inspect its ELF headers and symbols:
+
+```sh
+cc -Wall -Wextra -Werror -c ft_strlen.c -o /tmp/ft_strlen.o
+readelf -h -S /tmp/ft_strlen.o       # ELF header and sections
+readelf -s /tmp/ft_strlen.o          # symbol table
+nm -g --defined-only /tmp/ft_strlen.o
+nm -u /tmp/ft_strlen.o               # symbols the object needs from elsewhere
+```
+
+Inspect the members and symbols in `libft.a` without extracting its object
+files:
+
+```sh
+ar t libft.a                         # list archive members
+ar tv libft.a                        # list members with details
+nm -A -g --defined-only libft.a      # defined global symbols, labeled by member
+```
+
+To inspect an individual object from the archive with `readelf`, extract it
+into a separate directory first:
+
+```sh
+mkdir -p /tmp/libft-inspect
+cd /tmp/libft-inspect
+ar x /path/to/libft/libft.a ft_strlen.o
+readelf -h -S -s ft_strlen.o
+```
+
+After linking an executable against `libft.a` as in the previous example, check
+the executable's dependencies and dynamic symbols with:
+
+```sh
+readelf -d ./a.out                    # dynamic section, if present
+nm -D ./a.out                         # dynamic symbols, if present
+nm ./a.out | grep ' ft_strlen$'       # look for the linked library function
+```
+
+Linking with `-L... -lft` incorporates the needed archive members, but does not
+make the whole executable fully static; the system libraries may still be
+dynamic. A fully static executable requires toolchain support and an explicit
+`-static` linker option.
+
 ## Make targets
 
 | Target | Description |
