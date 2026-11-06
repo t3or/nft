@@ -1,127 +1,294 @@
+*This project has been created as part of the 42 curriculum by
+yamouqin.*
+
 # Libft
 
-Libft is the first project in the 42 Common Core. It is a personal C library
-that reimplements a selection of standard C library functions and adds utility
-functions for strings and linked lists. The library can be reused in later 42
-projects.
+## Description
 
-## Contents
+Libft is a C library that recreates a selection of standard C library
+functions and adds string, memory, output, and linked-list utilities.
+Its goal is to build a reusable set of low-level functions while
+practising memory management, pointers, and data structures.
 
-- **Mandatory part:** character checks and conversions, memory operations,
-  string operations, allocation, and file-descriptor output functions.
-- **Bonus part:** singly linked-list creation, traversal, deletion, and mapping
-  functions.
-- **`libft.h`:** public function prototypes and the `t_list` definition.
+The library is built as `libft.a`. It contains the mandatory functions
+and, when requested, the bonus linked-list functions.
 
-## Build
+## Instructions
 
-Build the mandatory library:
+### Build
 
-```sh
-make
+``` sh
+make        # mandatory functions
+make bonus  # mandatory + bonus functions
+make clean  # remove object files
+make fclean # remove object files and libft.a
+make re     # rebuild the mandatory library
 ```
 
-Build the mandatory and bonus functions:
+The Makefile must compile with `cc -Wall -Wextra -Werror` and create
+`libft.a` at the repository root.
+
+### Inspect the library
+
+`libft.a` is a static archive: it groups the compiled object files
+(`*.o`) into one library. It is not an executable. When a program links
+against `-lft`, the linker uses the archive to find the required code.
 
 ```sh
-make bonus
+ar -t libft.a                 # list object files in the archive
+ar -tv libft.a                # list members with details
+nm libft.a                    # list symbols from every object file
+nm -g --defined-only libft.a  # list globally defined symbols
+nm -u libft.a                 # list undefined symbols (external dependencies)
+nm -A libft.a                 # show which object file contains each symbol
+file libft.a                  # identify the archive format
 ```
 
-Both targets create the static library `libft.a` in the project root.
+Common `nm` symbol types:
 
-## Use in a project
+- `T`: globally defined function (code).
+- `t`: locally defined function (not globally exported).
+- `U`: undefined symbol; it must be provided elsewhere at link time.
+- `D` / `d`: initialized global / local data.
+- `B` / `b`: uninitialized global / local data.
+- `R` / `r`: read-only global / local data.
 
-Include `libft.h` in your source files and link the library when compiling:
+For this project, `nm -g --defined-only libft.a` should list the
+exported `ft_` functions. Use `nm -u libft.a` to inspect external
+dependencies; symbols such as `malloc`, `free`, or `write` may be
+expected where the subject permits them. The archive can also contain
+an index that helps the linker locate symbols efficiently.
 
-```sh
-cc -Wall -Wextra -Werror -I/path/to/libft \
-    main.c -L/path/to/libft -lft
+### Use
+
+Include `libft.h` and link the library:
+
+``` sh
+cc -Wall -Wextra -Werror main.c -I. -L. -lft
 ```
 
-Replace `/path/to/libft` with the directory containing `libft.h` and
-`libft.a`.
+### Requirements
 
-## Inspect object files and the static library
+-   Written in C and compliant with the 42 Norm.
+-   No global variables.
+-   Source files and `libft.a` are placed at the repository root.
+-   The archive is created with `ar`.
+-   Allocated memory must be freed by the caller when no longer needed.
+-   The mandatory and bonus parts are evaluated separately.
 
-A `.c` file is source code, not a statically linked binary. Compile it to an
-object file (`.o`) to inspect its ELF headers and symbols:
+## Library functions
 
-```sh
-cc -Wall -Wextra -Werror -c ft_strlen.c -o /tmp/ft_strlen.o
-readelf -h -S /tmp/ft_strlen.o       # ELF header and sections
-readelf -s /tmp/ft_strlen.o          # symbol table
-nm -g --defined-only /tmp/ft_strlen.o
-nm -u /tmp/ft_strlen.o               # symbols the object needs from elsewhere
+### Part 1 --- Libc reimplementations
+
+These functions use the `ft_` prefix and reproduce the required
+standard-function behaviour. They must not call external functions.
+
+  -----------------------------------------------------------------------
+  Function                            Purpose
+  ----------------------------------- -----------------------------------
+  `ft_isalpha`                        Tests whether a character is an
+                                      alphabetic letter.
+
+  `ft_isdigit`                        Tests whether a character is a
+                                      decimal digit.
+
+  `ft_isalnum`                        Tests whether a character is
+                                      alphanumeric.
+
+  `ft_isascii`                        Tests whether a value is in the
+                                      ASCII range.
+
+  `ft_isprint`                        Tests whether a character is
+                                      printable.
+
+  `ft_toupper`                        Converts a lowercase letter to
+                                      uppercase.
+
+  `ft_tolower`                        Converts an uppercase letter to
+                                      lowercase.
+
+  `ft_strlen`                         Returns the length of a string,
+                                      excluding its terminating null
+                                      byte.
+
+  `ft_memset`                         Fills a memory area with a byte
+                                      value.
+
+  `ft_bzero`                          Sets a memory area to zero bytes.
+
+  `ft_memcpy`                         Copies a specified number of bytes
+                                      between non-overlapping memory
+                                      areas.
+
+  `ft_memmove`                        Copies bytes while safely handling
+                                      overlapping memory areas.
+
+  `ft_memchr`                         Finds the first occurrence of a
+                                      byte in a memory area.
+
+  `ft_memcmp`                         Compares two memory areas byte by
+                                      byte.
+
+  `ft_strlcpy`                        Copies a string into a size-limited
+                                      destination and returns the source
+                                      length.
+
+  `ft_strlcat`                        Appends a string to a size-limited
+                                      destination and returns the length
+                                      it tried to create.
+
+  `ft_strchr`                         Finds the first occurrence of a
+                                      character in a string.
+
+  `ft_strrchr`                        Finds the last occurrence of a
+                                      character in a string.
+
+  `ft_strncmp`                        Compares at most a specified number
+                                      of characters in two strings.
+
+  `ft_strnstr`                        Finds a substring within a string,
+                                      searching no more than the
+                                      specified length.
+
+  `ft_atoi`                           Converts the initial numeric
+                                      portion of a string to an integer.
+
+  `ft_calloc`                         Allocates memory for an array and
+                                      initializes its bytes to zero.
+
+  `ft_strdup`                         Allocates and returns a duplicate
+                                      of a string.
+  -----------------------------------------------------------------------
+
+`ft_calloc` and `ft_strdup` use `malloc`. The subject requires
+`ft_calloc` to return a freeable pointer when either allocation
+dimension is zero.
+
+### Part 2 --- Additional functions
+
+  -----------------------------------------------------------------------
+  Function                Purpose                 External functions
+  ----------------------- ----------------------- -----------------------
+  `ft_substr`             Allocates a substring   `malloc`
+                          starting at an index,   
+                          up to a maximum length. 
+
+  `ft_strjoin`            Allocates the           `malloc`
+                          concatenation of two    
+                          strings.                
+
+  `ft_strtrim`            Copies a string after   `malloc`
+                          removing characters     
+                          from a given set at     
+                          both ends.              
+
+  `ft_split`              Splits a string by a    `malloc`, `free`
+                          delimiter into          
+                          independently           
+                          allocated,              
+                          null-terminated         
+                          strings.                
+
+  `ft_itoa`               Converts an integer to  `malloc`
+                          an allocated string,    
+                          including negative      
+                          values.                 
+
+  `ft_strmapi`            Creates a new string by `malloc`
+                          applying a function to  
+                          each character and its  
+                          index.                  
+
+  `ft_striteri`           Applies a function to   None
+                          each character and its  
+                          index, passing the      
+                          character by address so 
+                          it can be modified.     
+
+  `ft_putchar_fd`         Writes one character to `write`
+                          a file descriptor.      
+
+  `ft_putstr_fd`          Writes a string to a    `write`
+                          file descriptor.        
+
+  `ft_putendl_fd`         Writes a string         `write`
+                          followed by a newline   
+                          to a file descriptor.   
+
+  `ft_putnbr_fd`          Writes an integer to a  `write`
+                          file descriptor.        
+  -----------------------------------------------------------------------
+
+Functions that allocate memory return `NULL` when allocation fails, as
+specified by the subject. The caller must free returned allocations.
+
+### Part 3 --- linked lists
+
+The bonus part uses this node structure:
+
+``` c
+typedef struct s_list
+{
+    void            *content;
+    struct s_list   *next;
+}   t_list;
 ```
 
-Inspect the members and symbols in `libft.a` without extracting its object
-files:
+`content` stores the node's data; `next` points to the following node or
+`NULL`.
 
-```sh
-ar t libft.a                         # list archive members
-ar tv libft.a                        # list members with details
-nm -A -g --defined-only libft.a      # defined global symbols, labeled by member
-```
+  -----------------------------------------------------------------------
+  Function                Purpose                 External functions
+  ----------------------- ----------------------- -----------------------
+  `ft_lstnew`             Allocates a node,       `malloc`
+                          stores the supplied     
+                          content, and            
+                          initializes `next` to   
+                          `NULL`.                 
 
-To inspect an individual object from the archive with `readelf`, extract it
-into a separate directory first:
+  `ft_lstadd_front`       Adds a node at the      None
+                          beginning of a list.    
 
-```sh
-mkdir -p /tmp/libft-inspect
-cd /tmp/libft-inspect
-ar x /path/to/libft/libft.a ft_strlen.o
-readelf -h -S -s ft_strlen.o
-```
+  `ft_lstsize`            Counts the nodes in a   None
+                          list.                   
 
-After linking an executable against `libft.a` as in the previous example, check
-the executable's dependencies and dynamic symbols with:
+  `ft_lstlast`            Returns the last node   None
+                          of a list.              
 
-```sh
-readelf -d ./a.out                    # dynamic section, if present
-nm -D ./a.out                         # dynamic symbols, if present
-nm ./a.out | grep ' ft_strlen$'       # look for the linked library function
-```
+  `ft_lstadd_back`        Adds a node at the end  None
+                          of a list.              
 
-Linking with `-L... -lft` incorporates the needed archive members, but does not
-make the whole executable fully static; the system libraries may still be
-dynamic. A fully static executable requires toolchain support and an explicit
-`-static` linker option.
+  `ft_lstdelone`          Applies a               `free`
+                          content-deletion        
+                          function and frees one  
+                          node, without deleting  
+                          its successor.          
 
-## Make targets
+  `ft_lstclear`           Deletes a node and all  `free`
+                          following nodes, then   
+                          sets the list pointer   
+                          to `NULL`.              
 
-| Target | Description |
-| --- | --- |
-| `make` or `make all` | Build the mandatory library. |
-| `make bonus` | Build the mandatory and linked-list bonus functions. |
-| `make clean` | Remove object files. |
-| `make fclean` | Remove object files and `libft.a`. |
-| `make re` | Clean and rebuild the mandatory library. |
+  `ft_lstiter`            Applies a function to   None
+                          the content of every    
+                          node.                   
 
-## Function groups
+  `ft_lstmap`             Applies a function to   `malloc`, `free`
+                          each node's content and 
+                          builds a new list; uses 
+                          the deletion function   
+                          if creating the new     
+                          list fails.             
+  -----------------------------------------------------------------------
 
-**Character and conversion:** `ft_isalpha`, `ft_isdigit`, `ft_isalnum`,
-`ft_isascii`, `ft_isprint`, `ft_toupper`, `ft_tolower`, `ft_atoi`, `ft_itoa`.
+## Resources
 
-**Memory:** `ft_memset`, `ft_bzero`, `ft_memcpy`, `ft_memmove`, `ft_memchr`,
-`ft_memcmp`, `ft_calloc`.
+-   42 **Libft** subject, version 19.3.
+-   The relevant C library manual pages (`man 3`), including `strlen`,
+    `memcpy`, `memmove`, `calloc`, and string functions.
+-   C language and library references: [cppreference ---
+    C](https://en.cppreference.com/w/c).
 
-**Strings:** `ft_strlen`, `ft_strlcpy`, `ft_strlcat`, `ft_strchr`,
-`ft_strrchr`, `ft_strncmp`, `ft_strnstr`, `ft_strdup`, `ft_substr`,
-`ft_strjoin`, `ft_strtrim`, `ft_split`, `ft_strmapi`, `ft_striteri`.
-
-**File-descriptor output:** `ft_putchar_fd`, `ft_putstr_fd`, `ft_putendl_fd`,
-`ft_putnbr_fd`.
-
-**Bonus linked lists:** `ft_lstnew`, `ft_lstadd_front`, `ft_lstsize`,
-`ft_lstlast`, `ft_lstadd_back`, `ft_lstdelone`, `ft_lstclear`, `ft_lstiter`,
-`ft_lstmap`.
-
-## Notes
-
-- Functions that allocate memory return `NULL` if allocation fails. The caller
-  is responsible for freeing allocated memory.
-- List deletion functions call the supplied `del` callback to dispose of
-  content.
-- This README documents the project and build usage; check the current 42
-  subject and evaluation requirements for the exact rules applicable to your
-  campus and project version.
+AI assistance was used to help organize and edit this README. The
+project requirements and function descriptions are based on the 42
+subject; implementation, testing.
