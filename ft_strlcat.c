@@ -6,7 +6,7 @@
 /*   By: yamouqin <yamouqin@student.1337.ma>        +#+  +:+       +#+        */
 /*                                               +#+#+#+#+#+   +#+            */
 /*   Created: 2026/10/30 04:10:10 by yamouqin          #+#    #+#             */
-/*   Updated: 2026/10/30 04:10:10 by yamouqin         ###   ########.fr       */
+/*   Updated: 2026/11/05 15:05:23 by yamouqin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ size_t	ft_strlcat(char *dst, const char *src, size_t size)
 	size_t	i;
 
 	dst_len = 0;
+	if (size == 0)
+		return (ft_strlen(src));
 	while (dst_len < size && dst[dst_len])
 		dst_len++;
 	src_len = ft_strlen(src);

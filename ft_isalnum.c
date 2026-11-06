@@ -2,11 +2,11 @@
 /*                                                                            */
 /*                                                        :::      ::::::::   */
 /*   ft_isalnum.c                                       :+:      :+:    :+:   */
-/*                                                   +:+ +:+         +:+      */
-/*   By: yamouqin <yamouqin@student.1337.ma>        +#+  +:+       +#+        */
-/*                                               +#+#+#+#+#+   +#+            */
-/*   Created: 2026/10/30 04:10:10 by yamouqin          #+#    #+#             */
-/*   Updated: 2026/10/30 04:10:10 by yamouqin         ###   ########.fr       */
+/*                                                    +:+ +:+         +:+     */
+/*   By: yamouqin <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/10/28 07:21:08 by yamouqin          #+#    #+#             */
+/*   Updated: 2026/10/28 07:21:08 by yamouqin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,5 +14,7 @@
 
 int	ft_isalnum(int c)
 {
-	return (ft_isalpha(c) || ft_isdigit(c));
+	if (ft_isalpha(c) || ft_isdigit(c))
+		return (1);
+	return (0);
 }

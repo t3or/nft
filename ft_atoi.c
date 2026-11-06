@@ -6,7 +6,7 @@
 /*   By: yamouqin <yamouqin@student.1337.ma>        +#+  +:+       +#+        */
 /*                                               +#+#+#+#+#+   +#+            */
 /*   Created: 2026/10/30 04:10:10 by yamouqin          #+#    #+#             */
-/*   Updated: 2026/10/30 04:10:10 by yamouqin         ###   ########.fr       */
+/*   Updated: 2026/11/03 17:02:25 by yamouqin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@ int	ft_atoi(const char *nptr)
 	}
 	result = 0;
 	while (*nptr >= '0' && *nptr <= '9')
-		result = result * 10 + (*nptr++ - '0');
+	{
+		result = result * 10 + (*nptr - '0');
+		nptr++;
+	}
 	return ((int)(result * sign));
 }

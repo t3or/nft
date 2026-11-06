@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "libft.h"
-#include <stdint.h>
-#include <stdlib.h>
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
@@ -20,9 +18,11 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	size_t	len2;
 	char	*joined;
 
+	if (!s1 || !s2)
+		return (NULL);
 	len1 = ft_strlen(s1);
 	len2 = ft_strlen(s2);
-	if (len1 > SIZE_MAX - len2 - 1)
+	if (len1 > (size_t)-1 - len2 - 1)
 		return (NULL);
 	joined = malloc(len1 + len2 + 1);
 	if (!joined)
